@@ -9,7 +9,14 @@ const router = Router()
 
 // GET request
 router.get('/', (req, res) => {
-  res.json(Article.read())
+  // res.json(Article.read())
+  Article.read((error, data) => {
+    if (error) {
+      res.status(500).send('讀取檔案失敗')
+      return
+    }
+    res.send(data)
+  })
 })
 
 // 輸出 Router
