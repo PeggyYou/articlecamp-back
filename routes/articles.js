@@ -2,21 +2,14 @@
 const { Router } = require('express')
 
 // 引用資料
-const Article = require('../models')
+const articleService = require('../services')
 
 // 建立路由
 const router = Router()
 
-// GET request
+// GET/ Articles
 router.get('/', (req, res) => {
-  // res.json(Article.read())
-  Article.read((error, data) => {
-    if (error) {
-      res.status(500).send('讀取檔案失敗')
-      return
-    }
-    res.send(data)
-  })
+  res.json(articleService.read())
 })
 
 // 輸出 Router
