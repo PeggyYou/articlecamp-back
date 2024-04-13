@@ -1,29 +1,26 @@
 const fs = require('fs')
 const FILE_PATH = './public/data/articles.json'
-const { deepCopy } = require('../utils') // 引用
+const { deepCopy } = require('../utils')
 
-// class 屬於規則，名稱不會是複數
 class ArticleModel {
   constructor() {
-    this.articles = [] // 後續會多次使用，故加 'S'
-    this.read() // 當建立實例使用 class 時，此程式碼即開始運行
-      // 當成功時執行 then，對應到 read() => promise => resolve
+    this.articles = []
+    this.read()
       .then((articles) => {
-        this.articles.push(...articles) // 將讀取到的文章存入屬性 this.articles
+        this.articles.push(...articles)
       })
-      // 當失敗時執行 catch，對應到 read() => promise => reject
       .catch((err) => {
         console.log(err)
       })
   }
 
-  // 不同 class 的 method 命名盡量一致，便於取用
+  // 取得資料
   getList() {
     // 讀取文件後將資料存於變數中，為避免異動到變數內容，故另存至 deepCopy ，以供後續使用
     return deepCopy(this.articles) // 呼叫函式
   }
 
-  // 讀取文件
+  // 讀取資料
   read() {
     // 使用 promise 解決非同步情況
     return new Promise((resolve, reject) => {
@@ -41,6 +38,18 @@ class ArticleModel {
         }
       })
     })
+  }
+
+  // 寫入資料
+  write(article) {
+    console.log(`model articles write: ${JSON.stringify(article)}`)
+    article.id = 6
+    article.createAt = 1705819929
+    article.updateAt = 1705819929
+    console.log(
+      `model articles write _ add element: ${JSON.stringify(article)}`
+    )
+    return article
   }
 }
 

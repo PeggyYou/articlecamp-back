@@ -6,8 +6,13 @@ class ArticleService {
   }
 
   // 讀取文章列表
-  read() {
+  getList() {
     return articleModel.getList()
+  }
+
+  // 新增文章
+  add(article) {
+    return articleModel.write(article)
   }
 }
 
