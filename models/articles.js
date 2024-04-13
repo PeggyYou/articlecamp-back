@@ -8,10 +8,12 @@ class ArticleModel {
     this.read()
       .then((articles) => {
         this.articles.push(...articles)
+        this.articlesLength = this.articles.length
       })
       .catch((err) => {
         console.log(err)
       })
+    console.log('end of constructor')
   }
 
   // 取得資料
@@ -43,28 +45,27 @@ class ArticleModel {
   // 寫入資料
   write(article) {
     console.log(`model articles write: ${JSON.stringify(article)}`)
-    article.id = 6
-    article.createAt = 1705819929
-    article.updateAt = 1705819929
+
+    console.log(`this.articles:${this.articles}`)
+    console.log(`articlesLength+1:${this.articlesLength + 1}`)
+    console.log('getTimeStamp:', this.getTimeStamp())
+    console.log(`getTimeStamp to string:${Date().toString()}`)
+
+    article.id = this.articlesLength + 1
+    article.createAt = this.getTimeStamp()
+    article.updateAt = this.getTimeStamp()
+
     console.log(
       `model articles write _ add element: ${JSON.stringify(article)}`
     )
     return article
   }
-}
 
-// read() {
-//   try {
-//     const data = fs.readFileSync(FILE_PATH, 'utf-8') // 同步用法 ( web application 不太建議 )
-//     console.log(`成功讀取文件: ${data}`)
-//     return data
-//   } catch (error) {
-//     console.log('讀取檔案失敗')
-//     console.log(error)
-//     return null
-//   }
-// }
-// }
+  // 生成時間戳
+  getTimeStamp() {
+    return new Date().getTime()
+  }
+}
 
 // 建立實例
 const articleModel = new ArticleModel()
