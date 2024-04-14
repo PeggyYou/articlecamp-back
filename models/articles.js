@@ -16,11 +16,6 @@ class ArticleModel {
     console.log('end of constructor')
   }
 
-  // 回傳文章列表
-  getList() {
-    return deepCopy(this.articles)
-  }
-
   // 讀取資料
   read() {
     return new Promise((resolve, reject) => {
@@ -39,9 +34,15 @@ class ArticleModel {
     })
   }
 
-  // 寫入資料
-  write(article) {
+  // 回傳文章列表
+  getList() {
+    return deepCopy(this.articles)
+  }
+
+  // 新增單篇文章
+  add(article) {
     console.log(`model articles write: ${JSON.stringify(article)}`)
+    let result
 
     article.id = this.articlesLength + 1
     article.createAt = this.getTimeStamp()
@@ -55,16 +56,30 @@ class ArticleModel {
     this.articles.push(article) // this.articles 就是陣列型態，可直接push
     console.log(`this.articles _push : ${JSON.stringify(this.articles)}`)
 
-    // writeFile 寫入資料必須是字串型態，故採用 JSON.stringify 轉換型別
-    fs.writeFile(FILE_PATH, JSON.stringify(this.articles), function (error) {
-      if (error) {
-        console.log(`writeFile error:${error}`)
-      } else {
-        console.log('新增文章成功寫入data!')
-      }
-    })
+    this.write(this.articles)
+      .then((data) => {
+        console.log(`新增單篇文章, 成功訊息: ${data}`)
+        result = data
+      })
+      .catch((error) => {
+        console.log(`新增單篇文章, 錯誤訊息: ${error}`)
+        result = error
+      })
 
-    return article
+    return result
+  }
+
+  // 寫入資料
+  write(data) {
+    return new Promise((resolve, reject) => {
+      fs.writeFile(FILE_PATH, JSON.stringify(data), function (error) {
+        if (error) {
+          reject(`error_write:${error}`)
+        } else {
+          resolve('成功寫入資料庫!')
+        }
+      })
+    })
   }
 
   // 生成時間戳

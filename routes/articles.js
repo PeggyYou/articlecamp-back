@@ -12,14 +12,14 @@ router.get('/', (req, res) => {
   res.json(articleService.getList())
 })
 
-// POST /articles (新增文章)
+// POST /articles (新增單篇文章)
 router.post('/', (req, res) => {
   const BODY = req.body
   console.log(JSON.stringify(BODY))
   res.json(articleService.add(BODY))
 })
 
-// GET /article/:id (回傳單篇文章)
+// GET /articles/:id (回傳單篇文章)
 router.get('/:id', (req, res) => {
   const id = req.params.id
   console.log(`req.params.id:${id}`)

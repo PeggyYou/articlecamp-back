@@ -40,10 +40,12 @@ class ArticleService {
     return page
   }
 
-  // 新增文章
+  // 新增單篇文章
   add(article) {
-    return articleModel.write(article)
+    return articleModel.add(article)
   }
+
+
 }
 
 const articleService = new ArticleService()
