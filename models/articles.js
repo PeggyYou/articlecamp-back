@@ -1,6 +1,7 @@
 const fs = require('fs')
 const FILE_PATH = './public/data/articles.json'
 const { deepCopy } = require('../utils')
+const { resolve } = require('path')
 
 class ArticleModel {
   constructor() {
@@ -41,32 +42,33 @@ class ArticleModel {
 
   // 新增單篇文章
   add(article) {
-    console.log(`model articles write: ${JSON.stringify(article)}`)
-    let result
+    return new Promise((resolve, reject) => {
+      console.log(`model articles write: ${JSON.stringify(article)}`)
 
-    article.id = this.articlesLength + 1
-    article.createAt = this.getTimeStamp()
-    article.updateAt = this.getTimeStamp()
+      article.id = this.articlesLength + 1
+      article.createAt = this.getTimeStamp()
+      article.updateAt = this.getTimeStamp()
 
-    console.log(
-      `model articles write _ add element: ${JSON.stringify(article)}`
-    )
+      console.log(
+        `model articles write _ add element: ${JSON.stringify(article)}`
+      )
 
-    console.log(`this.articles: ${JSON.stringify(this.articles)}`)
-    this.articles.push(article) // this.articles 就是陣列型態，可直接push
-    console.log(`this.articles _push : ${JSON.stringify(this.articles)}`)
+      console.log(`this.articles: ${JSON.stringify(this.articles)}`)
+      this.articles.push(article) // this.articles 就是陣列型態，可直接push
+      console.log(`this.articles _push : ${JSON.stringify(this.articles)}`)
 
-    this.write(this.articles)
-      .then((data) => {
-        console.log(`新增單篇文章, 成功訊息: ${data}`)
-        result = data
-      })
-      .catch((error) => {
-        console.log(`新增單篇文章, 錯誤訊息: ${error}`)
-        result = error
-      })
-
-    return result
+      this.write(this.articles)
+        .then((data) => {
+          console.log(
+            `新增單篇文章結果:${data} ；回傳前端: ${JSON.stringify(article)}`
+          )
+          resolve(article)
+        })
+        .catch((error) => {
+          console.log(`新增單篇文章, 錯誤訊息: ${error}`)
+          reject(error)
+        })
+    })
   }
 
   // 寫入資料

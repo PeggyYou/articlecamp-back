@@ -16,7 +16,17 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const BODY = req.body
   console.log(JSON.stringify(BODY))
-  res.json(articleService.add(BODY))
+
+  articleService
+    .add(BODY)
+    .then((article) => {
+      console.log(`post article success:${article}`)
+      res.json(article)
+    })
+    .catch((error) => {
+      console.log(`post article error:${error}`)
+      res.json(article)
+    })
 })
 
 // GET /articles/:id (回傳單篇文章)
