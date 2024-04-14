@@ -82,9 +82,9 @@ class ArticleModel {
     })
   }
 
-  // 生成時間戳
+  // 生成時間戳(秒)
   getTimeStamp() {
-    return new Date().getTime()
+    return Math.floor(new Date().getTime() / 1000)
   }
 }
 
