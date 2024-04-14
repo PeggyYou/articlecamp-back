@@ -19,5 +19,12 @@ router.post('/', (req, res) => {
   res.json(articleService.add(BODY))
 })
 
+// GET /article/:id (回傳單篇文章)
+router.get('/:id', (req, res) => {
+  const id = req.params.id
+  console.log(`req.params.id:${id}`)
+  res.json(articleService.getPage(id))
+})
+
 // 輸出 Router
 module.exports = router
