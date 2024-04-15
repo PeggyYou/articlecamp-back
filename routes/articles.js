@@ -7,7 +7,7 @@ const articleService = require('../services')
 // 建立路由
 const router = Router()
 
-// GET/ Articles
+// GET/ Articles (取得文章列表)
 router.get('/', (req, res) => {
   res.json(articleService.read())
 })

@@ -5,7 +5,7 @@ class ArticleService {
     this.article = []
   }
 
-  // 讀取文章列表
+  // 取得文章列表
   read() {
     return articleModel.getList()
   }
