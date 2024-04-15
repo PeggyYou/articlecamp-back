@@ -10,6 +10,11 @@ class ArticleService {
     return articleModel.getList()
   }
 
+  // 取得單篇文章
+  getPage(id) {
+    return articleModel.getPage(id)
+  }
+
   // 新增單篇文章
   add(article) {
     return new Promise((resolve, reject) => {

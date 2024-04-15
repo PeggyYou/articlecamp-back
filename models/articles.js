@@ -39,6 +39,26 @@ class ArticleModel {
     })
   }
 
+  // 取得單篇文章
+  getPage(id) {
+    let articles = this.getList()
+
+    // 所有文章列表的 id 存為一個陣列
+    let articles_id = []
+    for (let i = 0; i < articles.length; i++) {
+      articles_id.push(articles[i].id)
+    }
+
+    // 比對 id 存於 文章列表，有則返回該篇文章資料
+    let indexOfId = articles_id.indexOf(Number(id))
+    if (indexOfId === -1) {
+      return `id(${id})的文章不存在`
+    } else {
+      console.log(`返回單篇文章:${JSON.stringify(articles[indexOfId])}`)
+      return articles[indexOfId]
+    }
+  }
+
   // 新增單篇文章
   add(article) {
     return new Promise((resolve, reject) => {
