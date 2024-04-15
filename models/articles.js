@@ -34,9 +34,33 @@ class ArticleModel {
     })
   }
 
-  // 回傳文章列表
+  // 取得文章列表
   getList() {
     return deepCopy(this.articles)
+  }
+
+  // 取得單篇文章
+  getPage(id) {
+    let articles = this.getList()
+    console.log(`model_getPage_articles: ${JSON.stringify(articles)}`)
+
+    // 所有文章列表的 id 存為一個陣列
+    let articles_id = []
+    for (let i = 0; i < articles.length; i++) {
+      articles_id.push(articles[i].id)
+    }
+    console.log(`list of articles_id: ${articles_id}`)
+
+    // 比對 單篇文章 id 是否存於 文章列表 id 陣列，如果有則返回該篇文章資料
+    let indexOfId = articles_id.indexOf(Number(id))
+    console.log(`index of articles_id requested by user : ${indexOfId}`)
+
+    if (indexOfId === -1) {
+      return `id(${id})的文章不存在`
+    } else {
+      console.log(`返回單篇文章:${JSON.stringify(articles[indexOfId])}`)
+      return articles[indexOfId]
+    }
   }
 
   // 新增單篇文章

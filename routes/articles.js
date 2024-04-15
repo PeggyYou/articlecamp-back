@@ -19,7 +19,7 @@ router.post('/', (req, res) => {
   res.json(articleService.add(BODY))
 })
 
-// GET /articles/:id (回傳單篇文章)
+// GET /articles/:id (取得單篇文章)
 router.get('/:id', (req, res) => {
   const id = req.params.id
   console.log(`req.params.id:${id}`)
