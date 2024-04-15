@@ -7,9 +7,24 @@ const articleService = require('../services')
 // 建立路由
 const router = Router()
 
-// GET/ Articles (取得文章列表)
+// GET/ articles (取得文章列表)
 router.get('/', (req, res) => {
-  res.json(articleService.read())
+  res.json(articleService.getList())
+})
+
+// POST /articles (新增單篇文章)
+router.post('/', (req, res) => {
+  const BODY = req.body
+  console.log(JSON.stringify(BODY))
+
+  articleService
+    .add(BODY)
+    .then((article) => {
+      res.json(article)
+    })
+    .catch((error) => {
+      res.json(article)
+    })
 })
 
 // 輸出 Router

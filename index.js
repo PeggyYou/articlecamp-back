@@ -7,6 +7,10 @@ const PORT = 3000
 // 使用 cors 中間件
 app.use(cors())
 
+// 告訴 Express 應用程式要使用 express.json() 中間件來解析請求主體中的 JSON 格式資料
+app.use(express.json())
+
+
 // 引用路由器
 const router = require('./routes')
 

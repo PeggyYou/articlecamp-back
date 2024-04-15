@@ -6,8 +6,22 @@ class ArticleService {
   }
 
   // 取得文章列表
-  read() {
+  getList() {
     return articleModel.getList()
+  }
+
+  // 新增單篇文章
+  add(article) {
+    return new Promise((resolve, reject) => {
+      articleModel
+        .add(article)
+        .then((article) => {
+          resolve(article)
+        })
+        .catch((error) => {
+          reject(error)
+        })
+    })
   }
 }
 
