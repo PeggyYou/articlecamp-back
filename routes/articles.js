@@ -34,5 +34,15 @@ router.get('/:id', (req, res) => {
   res.json(articleService.getPage(id))
 })
 
+// PUT /articles/:id (修改單篇文章)
+router.put('/:id', (req, res) => {
+  const id = req.params.id
+  const BODY = req.body
+  console.log(`req.params:${JSON.stringify(req.params)}`)
+  console.log(`req.params.id:${id}`)
+  console.log(`req.body:${JSON.stringify(BODY)}`)
+  res.json(articleService.update({ id, BODY }))
+})
+
 // 輸出 Router
 module.exports = router

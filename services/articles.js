@@ -28,6 +28,11 @@ class ArticleService {
         })
     })
   }
+
+  // 修改單篇文章
+  update({ id, BODY }) {
+    return articleModel.update({ id, BODY })
+  }
 }
 
 const articleService = new ArticleService()
