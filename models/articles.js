@@ -1,6 +1,7 @@
 const fs = require('fs')
 const FILE_PATH = './public/data/articles.json'
 const { deepCopy } = require('../utils')
+const { resolve } = require('path')
 
 class ArticleModel {
   constructor() {
@@ -41,7 +42,7 @@ class ArticleModel {
 
   // 取得單篇文章
   getPage(id) {
-    let articles = this.getList()
+    let articles = this.articles
 
     // 所有文章列表的 id 存為一個陣列
     let articles_id = []
@@ -84,45 +85,28 @@ class ArticleModel {
 
   // 修改單篇文章
   update({ id, BODY }) {
-    console.log(`id:${id}`)
-    console.log(`body:${BODY}`)
-    console.log(`body.author:${BODY.author}`)
-    console.log(`body.title:${BODY.title}`)
-    console.log(`body.content:${BODY.content}`)
+    return new Promise((resolve, reject) => {
+      let article = this.getPage(id)
 
-    let articles = articleModel.getList()
-    console.log(`articles in getPage: ${articles}`)
+      // 更新文章資料
+      article.author = BODY.author
+      article.title = BODY.title
+      article.content = BODY.content
+      article.updateAt = this.getTimeStamp()
+      console.log(`更新文章後的article:${JSON.stringify(article)}`)
+      console.log(`更新文章後的articles:${JSON.stringify(this.articles)}`)
 
-    // 所有文章列表的 id 存為一個陣列
-    let articles_id = []
-    for (let i = 0; i < articles.length; i++) {
-      articles_id.push(articles[i].id)
-    }
-    console.log(`list of articles_id: ${articles_id}`)
-
-    // 比對 單篇文章 id 是否存於 文章列表 id 陣列，如果有則返回該篇文章資料
-    let indexOfId = articles_id.indexOf(Number(id))
-    console.log(`index of articles_id requested by user : ${indexOfId}`)
-    console.log(
-      `articles index of id => article:${JSON.stringify(articles[indexOfId])}`
-    )
-
-    // 更新文章資料
-    articles[indexOfId].author = BODY.author
-    articles[indexOfId].title = BODY.title
-    articles[indexOfId].content = BODY.content
-    console.log(`更新文章後的article:${articles[indexOfId]}`)
-    console.log(`更新文章後的article:${JSON.stringify(articles[indexOfId])}`)
-
-    // 回傳文章資料前處理，移除時間戳
-    const result = {
-      id: articles[indexOfId].id,
-      author: articles[indexOfId].author,
-      title: articles[indexOfId].title,
-      content: articles[indexOfId].content
-    }
-    console.log(`page with 4 items:${result}`)
-    return result
+      // 寫入成功後，回傳更新後單篇文章
+      this.write(this.articles)
+        .then((data) => {
+          resolve(
+            article
+          )
+        })
+        .catch((err) => {
+          reject(`fail to update article:${err}`)
+        })
+    })
   }
 
   // 寫入資料
@@ -132,7 +116,7 @@ class ArticleModel {
         if (error) {
           reject(`error_write:${error}`)
         } else {
-          resolve('成功寫入資料庫!')
+          resolve(data)
         }
       })
     })

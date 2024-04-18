@@ -41,7 +41,11 @@ router.put('/:id', (req, res) => {
   console.log(`req.params:${JSON.stringify(req.params)}`)
   console.log(`req.params.id:${id}`)
   console.log(`req.body:${JSON.stringify(BODY)}`)
-  res.json(articleService.update({ id, BODY }))
+
+  articleService.update({ id, BODY })
+  .then((result) => {`res.update:${res.json(result)}`})
+  .catch((err)=>{`res.update err:${err}`})
+  
 })
 
 // 輸出 Router

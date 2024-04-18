@@ -31,7 +31,16 @@ class ArticleService {
 
   // 修改單篇文章
   update({ id, BODY }) {
-    return articleModel.update({ id, BODY })
+    return new Promise((resolve, reject) => {
+      articleModel
+        .update({ id, BODY })
+        .then((data) => {
+          resolve(data)
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
   }
 }
 
