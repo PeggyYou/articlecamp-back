@@ -29,8 +29,6 @@ class ArticleModel {
         }
         try {
           const articles = JSON.parse(data)
-          // 文章列表由最新排到最舊
-          articles.sort((a, b) => b.createAt - a.createAt)
           resolve(articles)
         } catch (error) {
           reject(`JSON解析錯誤，error:${error}`)
@@ -41,32 +39,31 @@ class ArticleModel {
 
   // 取得單篇文章
   getPage(id) {
-    let articles = this.getList()
+    let articles = this.articles // 針對需要深度複製的文章複製即可；如果只要讀取，使用 this.articles 即可
+    let length = articles.length // 存入變數，避免重複提取
 
-    // 所有文章列表的 id 存為一個陣列
-    let articles_id = []
-    for (let i = 0; i < articles.length; i++) {
-      articles_id.push(articles[i].id)
-    }
-
-    // 比對 id 存於 文章列表，有則返回該篇文章資料
-    let indexOfId = articles_id.indexOf(Number(id))
-    if (indexOfId === -1) {
-      return `id(${id})的文章不存在`
-    } else {
-      console.log(`返回單篇文章:${JSON.stringify(articles[indexOfId])}`)
-      return articles[indexOfId]
+    // 所有
+    for (let i = 0; i < length; i++) {
+      if (id === articles[i].id) {
+        console.log(`返回單篇文章:${JSON.stringify(articles[i])}`)
+        return articles[i]
+      } else {
+        console.log(`${id} is null`)
+        return `${id} is null`
+      }
     }
   }
 
   // 新增單篇文章
   add(article) {
     return new Promise((resolve, reject) => {
-      article.id = this.articlesLength + 1
+      article.id = this.maxId() + 1 // ID 不能重複，需考量有刪除文章的情況
       article.createAt = this.getTimeStamp()
       article.updateAt = this.getTimeStamp()
 
       this.articles.push(article)
+      // 文章列表由最新排到最舊
+      this.articles.sort((a, b) => b.updateAt - a.updateAt)
 
       this.write(this.articles)
         .then((data) => {
@@ -76,7 +73,10 @@ class ArticleModel {
           resolve(article)
         })
         .catch((error) => {
-          console.log(`新增單篇文章, 錯誤訊息: ${error}`)
+          console.log(`無法成功新增單篇文章, 錯誤訊息: ${error}`)
+          if (this.articles.length !== this.articlesLength) {
+            this.articles.pop(article) // 無法成功新增時，要把已經加入的資訊移除，避免後續資料錯誤
+          }
           reject(error)
         })
     })
@@ -98,6 +98,19 @@ class ArticleModel {
   // 生成時間戳(秒)
   getTimeStamp() {
     return Math.floor(new Date().getTime() / 1000)
+  }
+
+  // 判斷文章列表 id 最大值
+  maxId() {
+    let maxId = 0
+    let length = this.articlesLength
+    for (let i = 0; i < length; i++) {
+      let articleId = this.articles[i].id
+      if (articleId > maxId) {
+        maxId = articleId
+      }
+    }
+    return maxId
   }
 }
 

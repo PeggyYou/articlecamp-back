@@ -12,7 +12,12 @@ class ArticleService {
 
   // 取得單篇文章
   getPage(id) {
-    return articleModel.getPage(id)
+    // 判斷 id 的值
+    if (isNaN(id)){
+      return '請提供數字'
+    } else {
+      return articleModel.getPage(Number(id))
+    }
   }
 
   // 新增單篇文章
