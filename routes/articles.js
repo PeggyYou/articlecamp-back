@@ -32,7 +32,21 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
   const id = req.params.id
   console.log(`req.params.id:${id}`)
-  res.json(articleService.getPage(id))
+  res.json(articleService.get(id))
+})
+
+// PUT /articles/:id (修改單篇文章)
+router.put('/:id', (req, res) => {
+  const id = req.params.id
+  const BODY = req.body
+  console.log(`req.params:${JSON.stringify(req.params)}`)
+  console.log(`req.params.id:${id}`)
+  console.log(`req.body:${JSON.stringify(BODY)}`)
+
+  articleService.update({ id, BODY })
+  .then((result) => {`res.update:${res.json(result)}`})
+  .catch((err)=>{`res.update err:${err}`})
+  
 })
 
 // 輸出 Router

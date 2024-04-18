@@ -15,11 +15,6 @@ class ArticleModel {
       })
   }
 
-  // 取得文章列表
-  getList() {
-    return deepCopy(this.articles)
-  }
-
   // 讀取資料
   read() {
     return new Promise((resolve, reject) => {
@@ -37,13 +32,21 @@ class ArticleModel {
     })
   }
 
-  // 取得單篇文章
-  getPage(id) {
-    let articles = this.articles // 針對需要深度複製的文章複製即可；如果只要讀取，使用 this.articles 即可
-    let length = articles.length // 存入變數，避免重複提取
+  // 取得文章列表
+  getList() {
+    return deepCopy(this.articles)
+  }
 
-    // 所有
+  // 取得單篇文章
+  get(id) {
+    let articles = this.articles
+    let length = articles.length
+
+    console.log(`get id article:${JSON.stringify(articles)}`)
+
+    // 遍歷 id 比對文章
     for (let i = 0; i < length; i++) {
+      console.log(`i:${i}`)
       if (id === articles[i].id) {
         console.log(`返回單篇文章:${JSON.stringify(articles[i])}`)
         return articles[i]
@@ -57,7 +60,7 @@ class ArticleModel {
   // 新增單篇文章
   add(article) {
     return new Promise((resolve, reject) => {
-      article.id = this.maxId() + 1 // ID 不能重複，需考量有刪除文章的情況
+      article.id = this.maxId() + 1
       article.createAt = this.getTimeStamp()
       article.updateAt = this.getTimeStamp()
 
@@ -82,6 +85,33 @@ class ArticleModel {
     })
   }
 
+  // 修改單篇文章
+  update({ id, BODY }) {
+    return new Promise((resolve, reject) => {
+      let article = this.get(id)
+      console.log(`取得單篇文章:${article}`)
+
+      // 更新文章資料
+      article.author = BODY.author
+      article.title = BODY.title
+      article.content = BODY.content
+      article.updateAt = this.getTimeStamp()
+      console.log(`更新文章後的article:${JSON.stringify(article)}`)
+      console.log(`更新文章後的articles:${JSON.stringify(this.articles)}`)
+      // 文章列表由最新排到最舊
+      article.sort((a, b) => b.updateAt - a.updateAt)
+
+      // 寫入成功後，回傳更新後單篇文章
+      this.write(this.articles)
+        .then((data) => {
+          resolve(`articleService:${article}`)
+        })
+        .catch((err) => {
+          reject(`fail to update article:${err}`)
+        })
+    })
+  }
+
   // 寫入資料
   write(data) {
     return new Promise((resolve, reject) => {
@@ -89,7 +119,7 @@ class ArticleModel {
         if (error) {
           reject(`error_write:${error}`)
         } else {
-          resolve('成功寫入資料庫!')
+          resolve(data)
         }
       })
     })
