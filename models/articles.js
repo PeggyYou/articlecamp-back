@@ -1,6 +1,7 @@
 const fs = require('fs')
 const FILE_PATH = './public/data/articles.json'
 const { deepCopy } = require('../utils')
+const { resolve } = require('path')
 
 class ArticleModel {
   constructor() {
@@ -34,27 +35,31 @@ class ArticleModel {
 
   // 取得文章列表
   getList() {
+    // 文章列表由最新排到最舊
+    this.articles.sort((a, b) => b.updateAt - a.updateAt)
     return deepCopy(this.articles)
   }
 
-  // 取得單篇文章
+  // 依 id 取得單篇文章
   get(id) {
-    let articles = this.articles
-    let length = articles.length
+    return new Promise((resolve, reject) => {
+      let articles = this.articles
+      let length = articles.length
 
-    console.log(`get id article:${JSON.stringify(articles)}`)
+      console.log(`get id article:${JSON.stringify(articles)}`)
 
-    // 遍歷 id 比對文章
-    for (let i = 0; i < length; i++) {
-      console.log(`i:${i}`)
-      if (id === articles[i].id) {
-        console.log(`返回單篇文章:${JSON.stringify(articles[i])}`)
-        return articles[i]
-      } else {
-        console.log(`${id} is null`)
-        return `${id} is null`
+      // 遍歷 id 比對文章
+      for (let i = 0; i < length; i++) {
+        console.log(`i:${i}`)
+        // return 中斷 if 迴圈，並 resolve 回傳結果
+        if (id === articles[i].id) {
+          console.log(`返回單篇文章:${JSON.stringify(articles[i])}`)
+          return resolve({ index: i, data: articles[i] })
+        }
       }
-    }
+      console.log(`${id} is null`)
+      reject({ index: -1, data: null })
+    })
   }
 
   // 新增單篇文章
@@ -86,29 +91,32 @@ class ArticleModel {
   }
 
   // 修改單篇文章
-  update({ id, BODY }) {
-    return new Promise((resolve, reject) => {
-      let article = this.get(id)
-      console.log(`取得單篇文章:${article}`)
+  update({ id, newArticle }) {
+    // TODO: 非同步函式 async & await
+    return new Promise(async (resolve, reject) => {
+      try {
+        let article = await this.get(id)
+        console.log(`取得單篇文章:${article}`)
 
-      // 更新文章資料
-      article.author = BODY.author
-      article.title = BODY.title
-      article.content = BODY.content
-      article.updateAt = this.getTimeStamp()
-      console.log(`更新文章後的article:${JSON.stringify(article)}`)
-      console.log(`更新文章後的articles:${JSON.stringify(this.articles)}`)
-      // 文章列表由最新排到最舊
-      article.sort((a, b) => b.updateAt - a.updateAt)
+        // 更新文章資料
+        article.author = newArticle.author
+        article.title = newArticle.title
+        article.content = newArticle.content
+        article.updateAt = this.getTimeStamp()
+        console.log(`更新文章後的article:${JSON.stringify(article)}`)
+        console.log(`更新文章後的articles:${JSON.stringify(this.articles)}`)
+        // 文章列表由最新排到最舊
+        this.articles.sort((a, b) => b.updateAt - a.updateAt)
 
-      // 寫入成功後，回傳更新後單篇文章
-      this.write(this.articles)
-        .then((data) => {
-          resolve(`articleService:${article}`)
-        })
-        .catch((err) => {
-          reject(`fail to update article:${err}`)
-        })
+        // 寫入成功後，回傳更新後單篇文章
+        let articleWritten = await this.write(this.articles)
+          .then((result) => {
+            resolve(`articleService:${article}`)
+          })
+          .catch((error) => {
+            reject(`fail to update article:${error}`)
+          })
+      } catch (error) {}
     })
   }
 

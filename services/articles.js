@@ -10,14 +10,23 @@ class ArticleService {
     return articleModel.getList()
   }
 
-  // 取得單篇文章
+  // 依 id 取得單篇文章
   get(id) {
-    // 判斷 id 的值
-    if (isNaN(id)){
-      return '請提供數字'
-    } else {
-      return articleModel.get(Number(id))
-    }
+    // promise 內判定所有情境，包含判斷 id 的值
+    return new Promise((resolve, reject) => {
+      if (isNaN(id) || id.trim() === '') {
+        reject('id 請提供數字')
+      } else {
+        articleModel
+          .get(Number(id))
+          .then((result) => {
+            resolve(result)
+          })
+          .catch((error) => {
+            reject(`沒有 id 為 ${id} 的文章`)
+          })
+      }
+    })
   }
 
   // 新增單篇文章
@@ -35,10 +44,10 @@ class ArticleService {
   }
 
   // 修改單篇文章
-  update({ id, BODY }) {
+  update({ id, newArticle }) {
     return new Promise((resolve, reject) => {
       articleModel
-        .update({ id, BODY })
+        .update({ id, newArticle })
         .then((data) => {
           resolve(`articleService:${data}`)
         })

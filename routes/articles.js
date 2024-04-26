@@ -32,7 +32,14 @@ router.post('/', (req, res) => {
 router.get('/:id', (req, res) => {
   const id = req.params.id
   console.log(`req.params.id:${id}`)
-  res.json(articleService.get(id))
+  articleService
+    .get(id)
+    .then((result) => {
+      res.json(result)
+    })
+    .catch((error) => {
+      res.json(error)
+    })
 })
 
 // PUT /articles/:id (修改單篇文章)
@@ -43,10 +50,14 @@ router.put('/:id', (req, res) => {
   console.log(`req.params.id:${id}`)
   console.log(`req.body:${JSON.stringify(BODY)}`)
 
-  articleService.update({ id, BODY })
-  .then((result) => {`res.update:${res.json(result)}`})
-  .catch((err)=>{`res.update err:${err}`})
-  
+  articleService
+    .update({ id, BODY })
+    .then((result) => {
+      ;`res.update:${res.json(result)}`
+    })
+    .catch((err) => {
+      ;`res.update err:${err}`
+    })
 })
 
 // 輸出 Router
