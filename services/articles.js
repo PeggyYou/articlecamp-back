@@ -1,4 +1,5 @@
 const articleModel = require('../models')
+const { ReturnCode, ErrorCode } = require('../utils/codes')
 
 class ArticleService {
   constructor() {
@@ -23,7 +24,10 @@ class ArticleService {
             resolve(result.data)
           })
           .catch((error) => {
-            reject(`沒有 id 為 ${id} 的文章`)
+            reject({
+              code: ErrorCode.NotFound,
+              msg: `沒有 id 為 ${id} 的文章`
+            })
           })
       }
     })
@@ -38,7 +42,10 @@ class ArticleService {
           resolve(article)
         })
         .catch((error) => {
-          reject(error)
+          reject({
+            code: ErrorCode.WriteError,
+            msg: '寫入數據時發生錯誤'
+          })
         })
     })
   }
@@ -55,9 +62,15 @@ class ArticleService {
         .catch((error) => {
           console.log('articleService 獲得資料失敗')
           if (error.index === -1) {
-            reject(`沒有 id 為 ${id} 的文章`)
+            reject({
+              code: ErrorCode.NotFound,
+              msg: `沒有 id 為 ${id} 的文章`
+            })
           } else {
-            reject(error)
+            reject({
+              code: ErrorCode.UpdateError,
+              msg: '更新數據時發生錯誤'
+            })
           }
         })
     })

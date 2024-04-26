@@ -3,6 +3,7 @@ const { Router } = require('express')
 
 // 引用資料
 const articleService = require('../services')
+const { ReturnCode, ErrorCode } = require('../utils/codes')
 
 // 建立路由
 const router = Router()
@@ -17,14 +18,36 @@ router.post('/', (req, res) => {
   const BODY = req.body
   console.log(JSON.stringify(BODY))
 
-  // TODO: 新增 HTTP response status codes
+  const author = BODY.author
+  if (author === undefined || author === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.ParamError,
+      msg: 'author 為必要參數'
+    })
+  }
+  const title = BODY.title
+  if (title === undefined || title === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.ParamError,
+      msg: 'title 為必要參數'
+    })
+  }
+  const content = BODY.content
+  if (content === undefined || content === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.ParamError,
+      msg: 'content 為必要參數'
+    })
+  }
+
+  // 新增 HTTP response status codes
   articleService
     .add(BODY)
     .then((article) => {
       res.json(article)
     })
     .catch((error) => {
-      res.json(error)
+      res.status(ErrorCode.getReturnCode(error.code)).json(error)
     })
 })
 
@@ -38,7 +61,7 @@ router.get('/:id', (req, res) => {
       res.json(result)
     })
     .catch((error) => {
-      res.json(error)
+      res.status(ErrorCode.getReturnCode(error.code)).json(error)
     })
 })
 
@@ -58,7 +81,7 @@ router.put('/:id', (req, res) => {
     })
     .catch((error) => {
       console.log(`修改單篇文章失敗，路由回傳:${JSON.stringify(error)}`)
-      res.json(error)
+      res.status(ErrorCode.getReturnCode(error.code)).json(error)
     })
 })
 

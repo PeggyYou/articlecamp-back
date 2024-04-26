@@ -52,9 +52,6 @@ class ArticleModel {
 
       // 遍歷 id 比對文章
       for (let i = 0; i < length; i++) {
-        console.log(`ID:  ${ID}, typeof: ${typeof ID}`)
-        console.log(`i:  ${i}, typeof: ${typeof i}`)
-        console.log(`articles[i].id:  ${articles[i].id}`)
         // return 中斷 if 迴圈，並 resolve 回傳結果
         if (ID === articles[i].id) {
           console.log(`返回單篇文章:${JSON.stringify(articles[i])}`)
@@ -119,7 +116,11 @@ class ArticleModel {
         console.log(`成功寫入檔案 update:${JSON.stringify(written)}`)
         resolve(written[0])
       } catch (error) {
-        console.log(`無法更新單篇文章, 錯誤原因:${JSON.stringify(error)}`)
+        console.log(`無法更新單篇文章, 錯誤訊息:${JSON.stringify(error)}`)
+        if (this.articles.length !== this.articlesLength) {
+          this.article = this.articles.shift(editArticle) // 無法成功更新時，要把已經加入的資訊移除，避免後續資料錯誤
+          console.log(`把已經加入的資訊移除:${JSON.stringify(this.articles)}`)
+        }
         reject(error)
       }
     })
