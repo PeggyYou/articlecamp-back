@@ -43,6 +43,8 @@ class ArticleModel {
   // 依 id 取得單篇文章
   get(id) {
     return new Promise((resolve, reject) => {
+      let ID = Number(id)
+      console.log(`id 資料型態:${typeof ID}`)
       let articles = this.articles
       let length = articles.length
 
@@ -50,14 +52,16 @@ class ArticleModel {
 
       // 遍歷 id 比對文章
       for (let i = 0; i < length; i++) {
-        console.log(`i:${i}`)
+        console.log(`ID:  ${ID}, typeof: ${typeof ID}`)
+        console.log(`i:  ${i}, typeof: ${typeof i}`)
+        console.log(`articles[i].id:  ${articles[i].id}`)
         // return 中斷 if 迴圈，並 resolve 回傳結果
-        if (id === articles[i].id) {
+        if (ID === articles[i].id) {
           console.log(`返回單篇文章:${JSON.stringify(articles[i])}`)
           return resolve({ index: i, data: articles[i] })
         }
       }
-      console.log(`${id} is null`)
+      console.log(`${ID} is null`)
       reject({ index: -1, data: null })
     })
   }
@@ -91,32 +95,33 @@ class ArticleModel {
   }
 
   // 修改單篇文章
-  update({ id, newArticle }) {
-    // TODO: 非同步函式 async & await
+  update({ id, editArticle }) {
+    // 非同步函式 async & await
     return new Promise(async (resolve, reject) => {
       try {
         let article = await this.get(id)
-        console.log(`取得單篇文章:${article}`)
+        let originalArticle = article.data
+        let index = article.index
+        console.log(`依 id 取得單篇文章 article:${JSON.stringify(article)}`)
 
         // 更新文章資料
-        article.author = newArticle.author
-        article.title = newArticle.title
-        article.content = newArticle.content
-        article.updateAt = this.getTimeStamp()
-        console.log(`更新文章後的article:${JSON.stringify(article)}`)
+        editArticle.id = originalArticle.id
+        editArticle.createAt = originalArticle.createAt
+        editArticle.updateAt = this.getTimeStamp()
+        console.log(`更新文章後的editArticle:${JSON.stringify(editArticle)}`)
+        this.articles[index] = editArticle
         console.log(`更新文章後的articles:${JSON.stringify(this.articles)}`)
         // 文章列表由最新排到最舊
         this.articles.sort((a, b) => b.updateAt - a.updateAt)
 
         // 寫入成功後，回傳更新後單篇文章
-        let articleWritten = await this.write(this.articles)
-          .then((result) => {
-            resolve(`articleService:${article}`)
-          })
-          .catch((error) => {
-            reject(`fail to update article:${error}`)
-          })
-      } catch (error) {}
+        let written = await this.write(this.articles)
+        console.log(`成功寫入檔案 update:${JSON.stringify(written)}`)
+        resolve(written[0])
+      } catch (error) {
+        console.log(`無法更新單篇文章, 錯誤原因:${JSON.stringify(error)}`)
+        reject(error)
+      }
     })
   }
 
@@ -127,6 +132,7 @@ class ArticleModel {
         if (error) {
           reject(`error_write:${error}`)
         } else {
+          console.log(`成功寫入檔案 write:${JSON.stringify(data)}`)
           resolve(data)
         }
       })

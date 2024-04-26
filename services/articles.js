@@ -18,9 +18,9 @@ class ArticleService {
         reject('id 請提供數字')
       } else {
         articleModel
-          .get(Number(id))
+          .get(id)
           .then((result) => {
-            resolve(result)
+            resolve(result.data)
           })
           .catch((error) => {
             reject(`沒有 id 為 ${id} 的文章`)
@@ -44,15 +44,21 @@ class ArticleService {
   }
 
   // 修改單篇文章
-  update({ id, newArticle }) {
+  update({ id, editArticle }) {
     return new Promise((resolve, reject) => {
       articleModel
-        .update({ id, newArticle })
+        .update({ id, editArticle })
         .then((data) => {
-          resolve(`articleService:${data}`)
+          console.log(`articleService 成功獲得資料:${JSON.stringify(data)}`)
+          resolve(data)
         })
-        .catch((err) => {
-          reject(err)
+        .catch((error) => {
+          console.log('articleService 獲得資料失敗')
+          if (error.index === -1) {
+            reject(`沒有 id 為 ${id} 的文章`)
+          } else {
+            reject(error)
+          }
         })
     })
   }

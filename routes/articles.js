@@ -45,18 +45,20 @@ router.get('/:id', (req, res) => {
 // PUT /articles/:id (修改單篇文章)
 router.put('/:id', (req, res) => {
   const id = req.params.id
-  const BODY = req.body
+  const editArticle = req.body
   console.log(`req.params:${JSON.stringify(req.params)}`)
   console.log(`req.params.id:${id}`)
-  console.log(`req.body:${JSON.stringify(BODY)}`)
+  console.log(`req.body:${JSON.stringify(editArticle)}`)
 
   articleService
-    .update({ id, BODY })
+    .update({ id, editArticle })
     .then((result) => {
-      ;`res.update:${res.json(result)}`
+      console.log(`修改單篇文章成功，路由回傳:${JSON.stringify(result)}`)
+      res.json(result)
     })
-    .catch((err) => {
-      ;`res.update err:${err}`
+    .catch((error) => {
+      console.log(`修改單篇文章失敗，路由回傳:${JSON.stringify(error)}`)
+      res.json(error)
     })
 })
 
