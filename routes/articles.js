@@ -10,7 +10,22 @@ const router = Router()
 
 // GET/ articles (取得文章列表)
 router.get('/', (req, res) => {
-  res.json(articleService.getList())
+  // TODO: 關鍵字空格為無效，新增ReturnCode:'無效關鍵字'
+  const keyword = req.query.keyword
+  console.log(`req.params.query:${keyword}`)
+
+  if (keyword.trim() !== '') {
+    articleService
+      .search(keyword)
+      .then((result) => {
+        res.json(result)
+      })
+      .catch((error) => {
+        res.status(ErrorCode.getReturnCode(error.code)).json(error)
+      })
+  } else {
+    res.json(articleService.getList())
+  }
 })
 
 // POST /articles (新增單篇文章)

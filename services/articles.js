@@ -36,6 +36,34 @@ class ArticleService {
     })
   }
 
+  search(keyword) {
+    return new Promise((resolve, reject) => {
+      let id
+      if (keyword === 'hi') {
+        console.log(`keyword = hi，id = 1`)
+        id = 1
+      } else {
+        reject({
+          code: ErrorCode.NotFound,
+          msg: `沒有關鍵字為 ${keyword} 的文章`
+        })
+      }
+
+      articleModel
+        .get(id)
+        .then((result) => {
+          console.log(`成功依 id 取得單篇文張`)
+          resolve(result.data)
+        })
+        .catch((error) => {
+          reject({
+            code: ErrorCode.NotFound,
+            msg: `沒有 id 為 ${id} 的文章`
+          })
+        })
+    })
+  }
+
   // 新增單篇文章
   add(article) {
     return new Promise((resolve, reject) => {
