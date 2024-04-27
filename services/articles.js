@@ -16,7 +16,10 @@ class ArticleService {
     // promise 內判定所有情境，包含判斷 id 的值
     return new Promise((resolve, reject) => {
       if (isNaN(id) || id.trim() === '') {
-        reject('id 請提供數字')
+        reject({
+          code: ErrorCode.InvalidParameters,
+          msg: `id 請提供數字`
+        })
       } else {
         articleModel
           .get(id)
@@ -52,27 +55,35 @@ class ArticleService {
 
   // 修改單篇文章
   update({ id, editArticle }) {
+    // TODO: 確認哪一階段執行 id 型態轉換
     return new Promise((resolve, reject) => {
-      articleModel
-        .update({ id, editArticle })
-        .then((data) => {
-          console.log(`articleService 成功獲得資料:${JSON.stringify(data)}`)
-          resolve(data)
+      if (isNaN(id) || id.trim() === '') {
+        reject({
+          code: ErrorCode.InvalidParameters,
+          msg: `id 請提供數字`
         })
-        .catch((error) => {
-          console.log('articleService 獲得資料失敗')
-          if (error.index === -1) {
-            reject({
-              code: ErrorCode.NotFound,
-              msg: `沒有 id 為 ${id} 的文章`
-            })
-          } else {
-            reject({
-              code: ErrorCode.UpdateError,
-              msg: '更新數據時發生錯誤'
-            })
-          }
-        })
+      } else {
+        articleModel
+          .update({ id, editArticle })
+          .then((data) => {
+            console.log(`articleService 成功獲得資料:${JSON.stringify(data)}`)
+            resolve(data)
+          })
+          .catch((error) => {
+            console.log('articleService 獲得資料失敗')
+            if (error.index === -1) {
+              reject({
+                code: ErrorCode.NotFound,
+                msg: `沒有 id 為 ${id} 的文章`
+              })
+            } else {
+              reject({
+                code: ErrorCode.UpdateError,
+                msg: '更新數據時發生錯誤'
+              })
+            }
+          })
+      }
     })
   }
 }

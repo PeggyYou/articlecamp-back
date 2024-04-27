@@ -44,11 +44,10 @@ class ArticleModel {
   get(id) {
     return new Promise((resolve, reject) => {
       let ID = Number(id)
-      console.log(`id 資料型態:${typeof ID}`)
       let articles = this.articles
       let length = articles.length
 
-      console.log(`get id article:${JSON.stringify(articles)}`)
+      console.log(`get articles:${JSON.stringify(articles)}`)
 
       // 遍歷 id 比對文章
       for (let i = 0; i < length; i++) {
@@ -96,6 +95,8 @@ class ArticleModel {
     // 非同步函式 async & await
     return new Promise(async (resolve, reject) => {
       try {
+        // TODO: 同時取得兩篇文章，一篇失敗、一篇成功，回傳值的顯示?
+        // TODO: 功能別專一化 (一個函式別塞太多功能)
         let article = await this.get(id)
         let originalArticle = article.data
         let index = article.index
