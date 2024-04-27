@@ -10,21 +10,28 @@ const router = Router()
 
 // GET/ articles (取得文章列表)
 router.get('/', (req, res) => {
-  // TODO: 關鍵字空格為無效，新增ReturnCode:'無效關鍵字'
   const keyword = req.query.keyword
   console.log(`req.params.query:${keyword}`)
 
-  if (keyword.trim() !== '') {
+  if (keyword === undefined) {
+    res.json(articleService.getList())
+  } else {
+    if (keyword.trim() === ''){
+      return res.status(ReturnCode.BadRequest).json({
+        code: ErrorCode.InvalidParameters,
+        msg: '關鍵字為空值，請重新輸入'
+      })
+    }
     articleService
       .search(keyword)
       .then((result) => {
+        console.log(`路由回傳關鍵字搜尋結果成功：${JSON.stringify(result)}`)
         res.json(result)
       })
       .catch((error) => {
+        console.log(`路由回傳關鍵字搜尋結果失敗：${error}`)
         res.status(ErrorCode.getReturnCode(error.code)).json(error)
       })
-  } else {
-    res.json(articleService.getList())
   }
 })
 
@@ -36,21 +43,21 @@ router.post('/', (req, res) => {
   const author = BODY.author
   if (author === undefined || author === '') {
     return res.status(ReturnCode.BadRequest).json({
-      code: ErrorCode.ParamError,
+      code: ErrorCode.MissingParameters,
       msg: 'author 為必要參數'
     })
   }
   const title = BODY.title
   if (title === undefined || title === '') {
     return res.status(ReturnCode.BadRequest).json({
-      code: ErrorCode.ParamError,
+      code: ErrorCode.MissingParameters,
       msg: 'title 為必要參數'
     })
   }
   const content = BODY.content
   if (content === undefined || content === '') {
     return res.status(ReturnCode.BadRequest).json({
-      code: ErrorCode.ParamError,
+      code: ErrorCode.MissingParameters,
       msg: 'content 為必要參數'
     })
   }

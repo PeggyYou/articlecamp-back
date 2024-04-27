@@ -38,29 +38,34 @@ class ArticleService {
 
   search(keyword) {
     return new Promise((resolve, reject) => {
-      let id
-      if (keyword === 'hi') {
-        console.log(`keyword = hi，id = 1`)
-        id = 1
-      } else {
+      // keyword 做字串處理
+      let keyword_ = keyword.trim().toLowerCase()
+      console.log(`keyword_:${keyword_}`)
+
+      // 取得文章列表
+      let articles = articleModel.getList()
+      console.log(`articles:${JSON.stringify(articles)}`)
+
+      // 文章列表比對 keyword
+      let articleFiltered = articles.filter(function (item, index, array) {
+        return (
+          item.author.toLowerCase().toLowerCase().includes(keyword_) ||
+          item.title.toLowerCase().includes(keyword_) ||
+          item.content.toLowerCase().includes(keyword_)
+        )
+      })
+      console.log(`articleFiltered:${JSON.stringify(articleFiltered)}`)
+
+      // 回傳文章比對 keyword 結果
+      if (articleFiltered.length === 0) {
         reject({
           code: ErrorCode.NotFound,
-          msg: `沒有關鍵字為 ${keyword} 的文章`
+          msg: `沒有關鍵字為 ${keyword_} 的文章`
         })
+      } else {
+        console.log(`回傳 articleFiltered:${JSON.stringify(articleFiltered)}`)
+        resolve(articleFiltered)
       }
-
-      articleModel
-        .get(id)
-        .then((result) => {
-          console.log(`成功依 id 取得單篇文張`)
-          resolve(result.data)
-        })
-        .catch((error) => {
-          reject({
-            code: ErrorCode.NotFound,
-            msg: `沒有 id 為 ${id} 的文章`
-          })
-        })
     })
   }
 
