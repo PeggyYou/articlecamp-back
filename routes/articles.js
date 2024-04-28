@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
   if (keyword === undefined) {
     res.json(articleService.getList())
   } else {
-    if (keyword.trim() === ''){
+    if (keyword.trim() === '') {
       return res.status(ReturnCode.BadRequest).json({
         code: ErrorCode.InvalidParameters,
         msg: '關鍵字為空值，請重新輸入'
@@ -61,6 +61,13 @@ router.post('/', (req, res) => {
       msg: 'content 為必要參數'
     })
   }
+  const category = BODY.category
+  if (category === undefined || category === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'category 為必要參數'
+    })
+  }
 
   // 新增 HTTP response status codes
   articleService
@@ -71,6 +78,12 @@ router.post('/', (req, res) => {
     .catch((error) => {
       res.status(ErrorCode.getReturnCode(error.code)).json(error)
     })
+})
+
+// GET /articles/category (取得文章分類)
+router.get('/category', (req, res) => {
+  // TODO: 確認 /:id / category 使用順序
+  res.json(articleService.getCategory())
 })
 
 // GET /articles/:id (取得單篇文章)
@@ -94,6 +107,35 @@ router.put('/:id', (req, res) => {
   console.log(`req.params:${JSON.stringify(req.params)}`)
   console.log(`req.params.id:${id}`)
   console.log(`req.body:${JSON.stringify(editArticle)}`)
+
+  const author = editArticle.author
+  if (author === undefined || author === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'author 為必要參數'
+    })
+  }
+  const title = editArticle.title
+  if (title === undefined || title === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'title 為必要參數'
+    })
+  }
+  const content = editArticle.content
+  if (content === undefined || content === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'content 為必要參數'
+    })
+  }
+  const category = editArticle.category
+  if (category === undefined || category === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'category 為必要參數'
+    })
+  }
 
   articleService
     .update({ id, editArticle })

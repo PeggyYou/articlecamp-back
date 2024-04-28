@@ -36,6 +36,10 @@ class ArticleService {
     })
   }
 
+  getCategory() {
+    return articleModel.getCategory()
+  }
+
   search(keyword) {
     return new Promise((resolve, reject) => {
       // keyword 做字串處理
@@ -45,9 +49,11 @@ class ArticleService {
       // 取得文章列表
       let articles = articleModel.getList()
       console.log(`articles:${JSON.stringify(articles)}`)
+      console.log(`取得文章列表結束`)
 
       // 文章列表比對 keyword
       let articleFiltered = articles.filter(function (item, index, array) {
+        console.log(`開始比對文章關鍵字...`)
         return (
           item.author.toLowerCase().toLowerCase().includes(keyword_) ||
           item.title.toLowerCase().includes(keyword_) ||
