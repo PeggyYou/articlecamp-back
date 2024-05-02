@@ -8,31 +8,11 @@ const { ReturnCode, ErrorCode } = require('../utils/codes')
 // 建立路由
 const router = Router()
 
-// GET/ articles (取得文章列表)
+// GET/ articles (取得文章列表及搜尋關鍵字)
 router.get('/', (req, res) => {
   const keyword = req.query.keyword
   console.log(`req.params.query:${keyword}`)
-
-  if (keyword === undefined) {
-    res.json(articleService.getList())
-  } else {
-    if (keyword.trim() === '') {
-      return res.status(ReturnCode.BadRequest).json({
-        code: ErrorCode.InvalidParameters,
-        msg: '關鍵字為空值，請重新輸入'
-      })
-    }
-    articleService
-      .search(keyword)
-      .then((result) => {
-        console.log(`路由回傳關鍵字搜尋結果成功：${JSON.stringify(result)}`)
-        res.json(result)
-      })
-      .catch((error) => {
-        console.log(`路由回傳關鍵字搜尋結果失敗：${error}`)
-        res.status(ErrorCode.getReturnCode(error.code)).json(error)
-      })
-  }
+  res.json(articleService.getList(keyword))
 })
 
 // POST /articles (新增單篇文章)

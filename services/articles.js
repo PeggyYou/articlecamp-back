@@ -7,8 +7,27 @@ class ArticleService {
   }
 
   // 取得文章列表
-  getList() {
-    return articleModel.getList()
+  getList(keyword) {
+    // 取得文章列表
+    let articles = articleModel.getList()
+    console.log(`articles:${JSON.stringify(articles)}`)
+
+    // 文章列表比對 keyword
+    if (typeof keyword !== 'undefined') {
+      // keyword 做字串處理
+      let keyword_ = keyword.trim().toLowerCase()
+      console.log(`keyword_:${keyword_}`)
+      articles = articles.filter(function (item, index, array) {
+        return (
+          item.author.toLowerCase().toLowerCase().includes(keyword_) ||
+          item.title.toLowerCase().includes(keyword_) ||
+          item.content.toLowerCase().includes(keyword_)
+        )
+      })
+    }
+    console.log(`articles_Filtered:${JSON.stringify(articles)}`)
+
+    return articles
   }
 
   // 依 id 取得單篇文章
@@ -38,41 +57,6 @@ class ArticleService {
 
   getCategory() {
     return articleModel.getCategory()
-  }
-
-  search(keyword) {
-    return new Promise((resolve, reject) => {
-      // keyword 做字串處理
-      let keyword_ = keyword.trim().toLowerCase()
-      console.log(`keyword_:${keyword_}`)
-
-      // 取得文章列表
-      let articles = articleModel.getList()
-      console.log(`articles:${JSON.stringify(articles)}`)
-      console.log(`取得文章列表結束`)
-
-      // 文章列表比對 keyword
-      let articleFiltered = articles.filter(function (item, index, array) {
-        console.log(`開始比對文章關鍵字...`)
-        return (
-          item.author.toLowerCase().toLowerCase().includes(keyword_) ||
-          item.title.toLowerCase().includes(keyword_) ||
-          item.content.toLowerCase().includes(keyword_)
-        )
-      })
-      console.log(`articleFiltered:${JSON.stringify(articleFiltered)}`)
-
-      // 回傳文章比對 keyword 結果
-      if (articleFiltered.length === 0) {
-        reject({
-          code: ErrorCode.NotFound,
-          msg: `沒有關鍵字為 ${keyword_} 的文章`
-        })
-      } else {
-        console.log(`回傳 articleFiltered:${JSON.stringify(articleFiltered)}`)
-        resolve(articleFiltered)
-      }
-    })
   }
 
   // 新增單篇文章
