@@ -2,7 +2,7 @@
 const { Router } = require('express')
 
 // 引用資料
-const articleService = require('../services')
+const { articleService, categoryService } = require('../services')
 const { ReturnCode, ErrorCode } = require('../utils/codes')
 
 // 建立路由
@@ -11,7 +11,7 @@ const router = Router()
 // GET/ articles (取得文章列表及搜尋關鍵字)
 router.get('/', (req, res) => {
   const keyword = req.query.keyword
-  console.log(`req.params.query:${keyword}`)
+  console.log(`req.params.keyword:${keyword}`)
   res.json(articleService.getList(keyword))
 })
 
@@ -49,7 +49,6 @@ router.post('/', (req, res) => {
     })
   }
 
-  // 新增 HTTP response status codes
   articleService
     .add(BODY)
     .then((article) => {
@@ -62,8 +61,7 @@ router.post('/', (req, res) => {
 
 // GET /articles/category (取得文章分類)
 router.get('/category', (req, res) => {
-  // TODO: 確認 /:id / category 使用順序
-  res.json(articleService.getCategory())
+  res.json(categoryService.getList())
 })
 
 // GET /articles/:id (取得單篇文章)

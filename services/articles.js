@@ -1,4 +1,4 @@
-const articleModel = require('../models')
+const { articleModel, categoryModel } = require('../models')
 const { ReturnCode, ErrorCode } = require('../utils/codes')
 
 class ArticleService {
@@ -10,7 +10,16 @@ class ArticleService {
   getList(keyword) {
     // 取得文章列表
     let articles = articleModel.getList()
-    console.log(`articles:${JSON.stringify(articles)}`)
+    console.log(`articles from deepCopy:${articles}`)
+    let length = articles.length
+    let categories = categoryModel.getList()
+
+    // 帶入文章分類
+    for (let i = 0; i < length; i++) {
+      let article = articles[i]
+      let category = categories[article.category - 1].category
+      article.category = category
+    }
 
     // 文章列表比對 keyword
     if (typeof keyword !== 'undefined') {
@@ -25,7 +34,7 @@ class ArticleService {
         )
       })
     }
-    console.log(`articles_Filtered:${JSON.stringify(articles)}`)
+    console.log(`articles:${JSON.stringify(articles)}`)
 
     return articles
   }
@@ -53,10 +62,6 @@ class ArticleService {
           })
       }
     })
-  }
-
-  getCategory() {
-    return articleModel.getCategory()
   }
 
   // 新增單篇文章

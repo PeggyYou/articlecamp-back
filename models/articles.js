@@ -1,24 +1,14 @@
 const fs = require('fs')
-const FILE_PATH_ARTICLE = './public/data/articles.json'
-const FILE_PATH_CATEGORY = './public/data/categories.json'
+const FILE_PATH = './public/data/articles.json'
 const { deepCopy } = require('../utils')
-const { resolve } = require('path')
 
 class ArticleModel {
   constructor() {
     this.articles = []
-    this.categories = []
     this.read()
       .then((articles) => {
         this.articles.push(...articles)
         this.articlesLength = this.articles.length
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-    this.readCategory()
-      .then((categories) => {
-        this.categories.push(...categories)
       })
       .catch((err) => {
         console.log(err)
@@ -28,24 +18,7 @@ class ArticleModel {
   // 讀取文章
   read() {
     return new Promise((resolve, reject) => {
-      fs.readFile(FILE_PATH_ARTICLE, 'utf-8', (error, data) => {
-        if (error) {
-          return reject(error)
-        }
-        try {
-          const categories = JSON.parse(data)
-          resolve(categories)
-        } catch (error) {
-          reject(`JSON解析錯誤，error:${error}`)
-        }
-      })
-    })
-  }
-
-  // 讀取分類
-  readCategory() {
-    return new Promise((resolve, reject) => {
-      fs.readFile(FILE_PATH_CATEGORY, 'utf-8', (error, data) => {
+      fs.readFile(FILE_PATH, 'utf-8', (error, data) => {
         if (error) {
           return reject(error)
         }
@@ -62,27 +35,8 @@ class ArticleModel {
   // 取得文章列表
   getList() {
     let articles = deepCopy(this.articles)
-    console.log(`articles from deepCopy:${articles}`)
-    let length = articles.length
-    let categories = this.categories
-
-    // 帶入文章分類
-    for (let i = 0; i < length; i++) {
-      console.log('i:', i)
-      let article = articles[i]
-      console.log('article:', article)
-      let category = categories[article.category - 1].category
-      console.log('category:', category)
-      article.category = category
-      console.log('articles:', articles)
-    }
     // 文章列表由最新排到最舊
     articles.sort((a, b) => b.updateAt - a.updateAt)
-
-    // 確認資料儲存
-    console.log('check deepCopy:', articles)
-    console.log('check this.articles:', this.articles)
-
     return articles
   }
 
@@ -106,11 +60,6 @@ class ArticleModel {
       console.log(`${ID} is null`)
       reject({ index: -1, data: null })
     })
-  }
-
-  getCategory() {
-    console.log(`getCategory 結果:${JSON.stringify(this.categories)}`)
-    return this.categories
   }
 
   // 新增單篇文章
@@ -181,7 +130,7 @@ class ArticleModel {
   // 寫入資料
   write(data) {
     return new Promise((resolve, reject) => {
-      fs.writeFile(FILE_PATH_ARTICLE, JSON.stringify(data), function (error) {
+      fs.writeFile(FILE_PATH, JSON.stringify(data), function (error) {
         if (error) {
           reject(`error_write:${error}`)
         } else {
