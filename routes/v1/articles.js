@@ -2,7 +2,11 @@
 const { Router } = require('express')
 
 // 引用資料
-const { articleService, categoryService } = require('../../services')
+const {
+  articleService,
+  categoryService,
+  messageService
+} = require('../../services')
 const { ReturnCode, ErrorCode } = require('../../utils/codes')
 
 // 建立路由
@@ -62,6 +66,19 @@ router.post('/', (req, res) => {
 // GET /v1/articles/category (取得文章分類)
 router.get('/category', (req, res) => {
   res.json(categoryService.getList())
+})
+
+// POST /v1/articles/:id/:messages (單篇文章_新增留言)
+router.post('/:id/messages', (req, res) => {
+  const articleId = req.params.id
+  console.log(`req.params.id:${articleId}`)
+  const message = req.body
+  console.log(`req.body:${message}`)
+
+  
+  let msg = messageService.add({ articleId, message })
+  console.log(`msg:${JSON.stringify(msg)}`)
+  res.json(msg)
 })
 
 // GET /v1/articles/:id (取得單篇文章)
