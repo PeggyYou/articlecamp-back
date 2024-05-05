@@ -75,6 +75,14 @@ router.post('/:id/messages', (req, res) => {
   const message = req.body
   console.log(`req.body:${JSON.stringify(message)}`)
 
+  const content = message.content
+  if (content === undefined || content === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'content 為必要參數'
+    })
+  }
+
   messageService.add({ articleId, message })
   .then((result) => {
     console.log(`newMessage in response:${JSON.stringify(result)}`)
