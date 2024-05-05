@@ -28,6 +28,39 @@ class MessageModel {
     })
   }
 
+  getList(articleId) {
+    console.log('開始取得所有留言...')
+    // 取得留言列表
+    let messages = this.messages
+    console.log(`取得留言列表:${JSON.stringify(messages)}`)
+
+    // 比對符合文章 id 的留言
+    // TODO: id 傳入的型態，哪一階段要轉換?
+    let length = messages.length
+    let messageSelected = []
+    articleId = Number(articleId)
+    console.log(`typeof articleId:${typeof articleId}`)
+    console.log(`留言列表筆數:${length}`)
+    for (let i = 0; i < length; i++) {
+      let message = messages[i]
+      console.log(`當i為${i}，文章留言為:${JSON.stringify(message)}`)
+      console.log(`文章 id :${articleId}`)
+      console.log(`文章留言對應的文章 id :${message.articleId}`)
+      if (articleId === message.articleId) {
+        messageSelected.push(message)
+        console.log(`符合文章id的留言:${JSON.stringify(messageSelected)}`)
+      }
+    }
+
+    // 文章留言列表由最新排到最舊
+    messageSelected.sort((a, b) => b.createAt - a.createAt)
+    console.log(
+      `符合文章id的留言，由新到舊排序:${JSON.stringify(messageSelected)}`
+    )
+
+    return messageSelected
+  }
+
   async add({ articleId, message }) {
     try {
       // 取得所有留言
@@ -40,7 +73,7 @@ class MessageModel {
       console.log(`maxId:${this.maxId()}`)
       let newMessage = {
         id: this.maxId() + 1,
-        articleId: articleId,
+        articleId: Number(articleId),
         content: message.content,
         createAt: this.getTimeStamp()
       }

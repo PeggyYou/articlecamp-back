@@ -68,7 +68,23 @@ router.get('/category', (req, res) => {
   res.json(categoryService.getList())
 })
 
-// POST /v1/articles/:id/:messages (單篇文章_新增留言)
+// GET /v1/articles/:id/messages (單篇文章_取得留言)
+router.get('/:id/messages', (req, res) => {
+  const articleId = req.params.id
+  console.log(`req.params.id:${articleId}`)
+  messageService
+    .getList(articleId)
+    .then((result) => {
+      console.log(`success messages in response:${JSON.stringify(result)}`)
+      res.json(result)
+    })
+    .catch((error) => {
+      console.log(`error messages in response:${error}`)
+      res.status(ErrorCode.getReturnCode(error.code)).json(error)
+    })
+})
+
+// POST /v1/articles/:id/messages (單篇文章_新增留言)
 router.post('/:id/messages', (req, res) => {
   const articleId = req.params.id
   console.log(`req.params.id:${articleId}`)
@@ -83,13 +99,16 @@ router.post('/:id/messages', (req, res) => {
     })
   }
 
-  messageService.add({ articleId, message })
-  .then((result) => {
-    console.log(`newMessage in response:${JSON.stringify(result)}`)
-    res.json(result)
-  }).catch((error)=>{
-    console.log(`error in response:${JSON.stringify(error)}`)
-    res.json(error)})
+  messageService
+    .add({ articleId, message })
+    .then((result) => {
+      console.log(`newMessage in response:${JSON.stringify(result)}`)
+      res.json(result)
+    })
+    .catch((error) => {
+      console.log(`error in response:${JSON.stringify(error)}`)
+      res.status(ErrorCode.getReturnCode(error.code)).json(error)
+    })
 })
 
 // GET /v1/articles/:id (取得單篇文章)
