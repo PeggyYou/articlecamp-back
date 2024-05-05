@@ -73,12 +73,15 @@ router.post('/:id/messages', (req, res) => {
   const articleId = req.params.id
   console.log(`req.params.id:${articleId}`)
   const message = req.body
-  console.log(`req.body:${message}`)
+  console.log(`req.body:${JSON.stringify(message)}`)
 
-  
-  let msg = messageService.add({ articleId, message })
-  console.log(`msg:${JSON.stringify(msg)}`)
-  res.json(msg)
+  messageService.add({ articleId, message })
+  .then((result) => {
+    console.log(`newMessage in response:${JSON.stringify(result)}`)
+    res.json(result)
+  }).catch((error)=>{
+    console.log(`error in response:${JSON.stringify(error)}`)
+    res.json(error)})
 })
 
 // GET /v1/articles/:id (取得單篇文章)
