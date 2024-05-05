@@ -75,11 +75,10 @@ router.get('/:id/messages', (req, res) => {
   messageService
     .getList(articleId)
     .then((result) => {
-      console.log(`success messages in response:${JSON.stringify(result)}`)
       res.json(result)
     })
     .catch((error) => {
-      console.log(`error messages in response:${error}`)
+      console.log(`error messages in response:${JSON.stringify(error)}`)
       res.status(ErrorCode.getReturnCode(error.code)).json(error)
     })
 })
@@ -87,9 +86,7 @@ router.get('/:id/messages', (req, res) => {
 // POST /v1/articles/:id/messages (單篇文章_新增留言)
 router.post('/:id/messages', (req, res) => {
   const articleId = req.params.id
-  console.log(`req.params.id:${articleId}`)
   const message = req.body
-  console.log(`req.body:${JSON.stringify(message)}`)
 
   const content = message.content
   if (content === undefined || content === '') {
@@ -102,11 +99,9 @@ router.post('/:id/messages', (req, res) => {
   messageService
     .add({ articleId, message })
     .then((result) => {
-      console.log(`newMessage in response:${JSON.stringify(result)}`)
       res.json(result)
     })
     .catch((error) => {
-      console.log(`error in response:${JSON.stringify(error)}`)
       res.status(ErrorCode.getReturnCode(error.code)).json(error)
     })
 })

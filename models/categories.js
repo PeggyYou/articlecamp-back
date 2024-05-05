@@ -21,7 +21,6 @@ class CategoryModel {
           return reject(error)
         }
         try {
-          console.log('文章分類讀取成功')
           const categories = JSON.parse(data)
           resolve(categories)
         } catch (error) {
