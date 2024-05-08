@@ -5,10 +5,12 @@ const { deepCopy } = require('../utils')
 class ArticleModel {
   constructor() {
     this.articles = []
+    this.maxID = []
     this.read()
       .then((articles) => {
         this.articles.push(...articles)
         this.articlesLength = this.articles.length
+        this.maxID = this.maxId()
       })
       .catch((err) => {
         console.log(err)
@@ -65,7 +67,7 @@ class ArticleModel {
   // 新增單篇文章
   add(article) {
     return new Promise((resolve, reject) => {
-      article.id = this.maxId() + 1
+      article.id = this.maxID + 1
       article.createAt = this.getTimeStamp()
       article.updateAt = this.getTimeStamp()
 
@@ -130,7 +132,7 @@ class ArticleModel {
   // 寫入資料
   write(data) {
     return new Promise((resolve, reject) => {
-      fs.writeFile(FILE_PATH, JSON.stringify(data), function (error) {
+      fs.writeFile(FILE_PATH, JSON.stringify(data, null, 4), function (error) {
         if (error) {
           reject(`error_write:${error}`)
         } else {

@@ -1,3 +1,4 @@
+const { deepCopy } = require('../utils')
 const fs = require('fs')
 const FILE_PATH = './public/data/categories.json'
 
@@ -32,7 +33,7 @@ class CategoryModel {
 
   // 取得文章分類
   getList() {
-    return this.categories
+    return deepCopy(this.categories)
   }
 }
 

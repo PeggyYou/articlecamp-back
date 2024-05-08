@@ -19,10 +19,10 @@ class MessageService {
         }
 
         //確認單篇文章是否存在
-        let articles = await articleModel.get(articleId)
+        await articleModel.get(articleId)
 
         // 取得留言列表
-        let messages = await messageModel.getList(articleId)
+        let messages = messageModel.getList(articleId)
 
         return resolve(messages)
       } catch (error) {
@@ -58,7 +58,7 @@ class MessageService {
 
         //確認單篇文章是否存在
         // TODO: 取得單篇文章，要使用 MODEL 還是 SERVICE?
-        let article = await articleModel.get(articleId)
+        await articleModel.get(articleId)
 
         // 新增留言
         let newMessage = await messageModel.add({ articleId, message })
