@@ -1,8 +1,7 @@
-const { resolve } = require('path')
-const { ReturnCode, ErrorCode } = require('../utils/codes')
 const fs = require('fs')
-const { rejects } = require('assert')
 const FILE_PATH = './public/data/messages.json'
+const { ReturnCode, ErrorCode } = require('../utils/codes')
+const { deepCopy } = require('../utils')
 
 class MessageModel {
   constructor() {
@@ -30,7 +29,7 @@ class MessageModel {
 
   getList(articleId) {
     // 取得留言列表
-    let messages = this.messages
+    let messages = deepCopy(this.messages)
 
     // 比對符合文章 id 的留言
     let length = messages.length
@@ -49,17 +48,18 @@ class MessageModel {
     return messageSelected
   }
 
-  async add({ articleId, message }) {
+  async add({ articleId, user, content }) {
     try {
       // 取得留言列表
       // TODO: 直接使用 this.messages 還是存入變數?
-      let messages = this.messages
+      let messages = deepCopy(this.messages)
 
       // 新增至留言列表
       let newMessage = {
         id: this.maxId() + 1,
         articleId: Number(articleId),
-        content: message.content,
+        user:user,
+        content: content,
         createAt: this.getTimeStamp()
       }
       messages.push(newMessage)

@@ -1,22 +1,22 @@
 [
     {
         "id": 1,
-        "category":"無分類"
+        "name":"無分類"
     },
     {
         "id": 2,
-        "category":"理財"
+        "name":"理財"
     },
     {
         "id": 3,
-        "category":"家庭"
+        "name":"家庭"
     },
     {
         "id": 4,
-        "category":"職涯"
+        "name":"職涯"
     },
     {
         "id": 5,
-        "category":"健康"
+        "name":"健康"
     }
 ]

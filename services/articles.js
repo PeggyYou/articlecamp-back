@@ -17,7 +17,7 @@ class ArticleService {
     // 帶入文章分類
     for (let i = 0; i < length; i++) {
       let article = articles[i]
-      let category = categories[article.category - 1].category
+      let category = categories[article.category - 1].name
       article.category = category
     }
 
@@ -52,7 +52,16 @@ class ArticleService {
         articleModel
           .get(id)
           .then((result) => {
-            resolve(result.data)
+            console.log(
+              `result.data in article service:${JSON.stringify(result.data)}`
+            )
+            // 帶入文章分類
+            let categories = categoryModel.getList()
+            let article = result.data
+            let category = categories[article.category - 1].name
+            article.category = category
+            
+            resolve(article)
           })
           .catch((error) => {
             reject({
