@@ -44,7 +44,7 @@ class MessageService {
     })
   }
 
-  add({ articleId, message }) {
+  add({ articleId, user, content }) {
     return new Promise(async (resolve, reject) => {
       try {
         // 確認 id 屬有效值
@@ -54,6 +54,7 @@ class MessageService {
             code: ErrorCode.InvalidParameters,
             msg: 'id 請提供數字'
           })
+
         }
 
         //確認單篇文章是否存在
@@ -61,7 +62,7 @@ class MessageService {
         await articleModel.get(articleId)
 
         // 新增留言
-        let newMessage = await messageModel.add({ articleId, message })
+        let newMessage = await messageModel.add({ articleId,user, content })
 
         resolve(newMessage)
       } catch (error) {

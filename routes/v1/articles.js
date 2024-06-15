@@ -87,7 +87,18 @@ router.get('/:id/messages', (req, res) => {
 router.post('/:id/messages', (req, res) => {
   const articleId = req.params.id
   const message = req.body
+  console.log('message in route:',message)
 
+  console.log('user in route:', message.user)
+  const user = message.user
+  if (user === undefined || user === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'user 為必要參數'
+    })
+  }
+
+  console.log('content in route:', message.content)
   const content = message.content
   if (content === undefined || content === '') {
     return res.status(ReturnCode.BadRequest).json({
@@ -97,7 +108,7 @@ router.post('/:id/messages', (req, res) => {
   }
 
   messageService
-    .add({ articleId, message })
+    .add({ articleId, user, content })
     .then((result) => {
       res.json(result)
     })

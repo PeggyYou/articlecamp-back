@@ -2,6 +2,8 @@ const { ReturnCode, ErrorCode } = require('../utils/codes')
 const { deepCopy } = require('../utils')
 const fs = require('fs')
 const FILE_PATH = './public/data/messages.json'
+const { ReturnCode, ErrorCode } = require('../utils/codes')
+const { deepCopy } = require('../utils')
 
 class MessageModel {
   constructor() {
@@ -51,7 +53,7 @@ class MessageModel {
     return messageSelected
   }
 
-  async add({ articleId, message }) {
+  async add({ articleId, user, content }) {
     try {
       // 取得留言列表 (應使用深層複製保護原始資料，而非存入變數，以避免異動到原始資料)
       let messages = deepCopy(this.messages)
@@ -60,7 +62,8 @@ class MessageModel {
       let newMessage = {
         id: this.maxID + 1,
         articleId: Number(articleId),
-        content: message.content,
+        user:user,
+        content: content,
         createAt: this.getTimeStamp()
       }
       messages.push(newMessage)
