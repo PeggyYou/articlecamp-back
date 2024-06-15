@@ -4,8 +4,8 @@ const  { Router }  = require('express')
 // 建立路由
 const router = Router()
 
-// API-v1
-const articles = require('./articles')
+// articles
+const articles = require('../v2/articles')
 router.use('/articles', articles)
 
 // 匯出 router

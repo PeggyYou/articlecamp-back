@@ -2,20 +2,24 @@
 const { Router } = require('express')
 
 // 引用資料
-const { articleService, categoryService } = require('../services')
-const { ReturnCode, ErrorCode } = require('../utils/codes')
+const {
+  articleService,
+  categoryService,
+  messageService
+} = require('../../services')
+const { ReturnCode, ErrorCode } = require('../../utils/codes')
 
 // 建立路由
 const router = Router()
 
-// GET/ articles (取得文章列表及搜尋關鍵字)
+// GET /v1/articles (取得文章列表及搜尋關鍵字)
 router.get('/', (req, res) => {
   const keyword = req.query.keyword
   console.log(`req.params.keyword:${keyword}`)
   res.json(articleService.getList(keyword))
 })
 
-// POST /articles (新增單篇文章)
+// POST /v1/articles (新增單篇文章)
 router.post('/', (req, res) => {
   const BODY = req.body
   console.log(JSON.stringify(BODY))
@@ -59,12 +63,61 @@ router.post('/', (req, res) => {
     })
 })
 
-// GET /articles/category (取得文章分類)
+// GET /v1/articles/category (取得文章分類)
 router.get('/category', (req, res) => {
   res.json(categoryService.getList())
 })
 
-// GET /articles/:id (取得單篇文章)
+// GET /v1/articles/:id/messages (單篇文章_取得留言)
+router.get('/:id/messages', (req, res) => {
+  const articleId = req.params.id
+  console.log(`req.params.id:${articleId}`)
+  messageService
+    .getList(articleId)
+    .then((result) => {
+      res.json(result)
+    })
+    .catch((error) => {
+      console.log(`error messages in response:${JSON.stringify(error)}`)
+      res.status(ErrorCode.getReturnCode(error.code)).json(error)
+    })
+})
+
+// POST /v1/articles/:id/messages (單篇文章_新增留言)
+router.post('/:id/messages', (req, res) => {
+  const articleId = req.params.id
+  const message = req.body
+  console.log('message in route:',message)
+
+  console.log('user in route:', message.user)
+  const user = message.user
+  if (user === undefined || user === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'user 為必要參數'
+    })
+  }
+
+  console.log('content in route:', message.content)
+  const content = message.content
+  if (content === undefined || content === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'content 為必要參數'
+    })
+  }
+
+  messageService
+    .add({ articleId, user, content })
+    .then((result) => {
+      res.json(result)
+    })
+    .catch((error) => {
+      res.status(ErrorCode.getReturnCode(error.code)).json(error)
+    })
+})
+
+// GET /v1/articles/:id (取得單篇文章)
 router.get('/:id', (req, res) => {
   const id = req.params.id
   console.log(`req.params.id:${id}`)
@@ -78,7 +131,7 @@ router.get('/:id', (req, res) => {
     })
 })
 
-// PUT /articles/:id (修改單篇文章)
+// PUT /v1/articles/:id (修改單篇文章)
 router.put('/:id', (req, res) => {
   const id = req.params.id
   const editArticle = req.body
