@@ -12,14 +12,14 @@ const { ReturnCode, ErrorCode } = require('../../utils/codes')
 // 建立路由
 const router = Router()
 
-// GET /v1/articles (取得文章列表及搜尋關鍵字)
+// GET /V2/articles (取得文章列表及搜尋關鍵字)
 router.get('/', (req, res) => {
   const keyword = req.query.keyword
   console.log(`req.params.keyword:${keyword}`)
   res.json(articleService.getList(keyword))
 })
 
-// POST /v1/articles (新增單篇文章)
+// POST /V2/articles (新增單篇文章)
 router.post('/', (req, res) => {
   const BODY = req.body
   console.log(JSON.stringify(BODY))
@@ -63,12 +63,12 @@ router.post('/', (req, res) => {
     })
 })
 
-// GET /v1/articles/category (取得文章分類)
+// GET /V2/articles/category (取得文章分類)
 router.get('/category', (req, res) => {
   res.json(categoryService.getList())
 })
 
-// GET /v1/articles/:id/messages (單篇文章_取得留言)
+// GET /V2/articles/:id/messages (單篇文章_取得留言)
 router.get('/:id/messages', (req, res) => {
   const articleId = req.params.id
   console.log(`req.params.id:${articleId}`)
@@ -83,7 +83,7 @@ router.get('/:id/messages', (req, res) => {
     })
 })
 
-// POST /v1/articles/:id/messages (單篇文章_新增留言)
+// POST /V2/articles/:id/messages (單篇文章_新增留言)
 router.post('/:id/messages', (req, res) => {
   const articleId = req.params.id
   const message = req.body
@@ -117,7 +117,7 @@ router.post('/:id/messages', (req, res) => {
     })
 })
 
-// GET /v1/articles/:id (取得單篇文章)
+// GET /V2/articles/:id (取得單篇文章)
 router.get('/:id', (req, res) => {
   const id = req.params.id
   console.log(`req.params.id:${id}`)
@@ -131,7 +131,7 @@ router.get('/:id', (req, res) => {
     })
 })
 
-// PUT /v1/articles/:id (修改單篇文章)
+// PUT /V2/articles/:id (修改單篇文章)
 router.put('/:id', (req, res) => {
   const id = req.params.id
   const editArticle = req.body
