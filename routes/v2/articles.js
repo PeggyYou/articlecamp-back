@@ -2,7 +2,7 @@
 const { Router } = require('express')
 
 // 引用資料
-const articleService = require('../services')
+const { articleService, categoryService } = require('../services')
 const { ReturnCode, ErrorCode } = require('../utils/codes')
 
 // 建立路由
@@ -11,7 +11,7 @@ const router = Router()
 // GET/ articles (取得文章列表及搜尋關鍵字)
 router.get('/', (req, res) => {
   const keyword = req.query.keyword
-  console.log(`req.params.query:${keyword}`)
+  console.log(`req.params.keyword:${keyword}`)
   res.json(articleService.getList(keyword))
 })
 
@@ -41,8 +41,14 @@ router.post('/', (req, res) => {
       msg: 'content 為必要參數'
     })
   }
+  const category = BODY.category
+  if (category === undefined || category === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'category 為必要參數'
+    })
+  }
 
-  // 新增 HTTP response status codes
   articleService
     .add(BODY)
     .then((article) => {
@@ -51,6 +57,11 @@ router.post('/', (req, res) => {
     .catch((error) => {
       res.status(ErrorCode.getReturnCode(error.code)).json(error)
     })
+})
+
+// GET /articles/category (取得文章分類)
+router.get('/category', (req, res) => {
+  res.json(categoryService.getList())
 })
 
 // GET /articles/:id (取得單篇文章)
@@ -74,6 +85,35 @@ router.put('/:id', (req, res) => {
   console.log(`req.params:${JSON.stringify(req.params)}`)
   console.log(`req.params.id:${id}`)
   console.log(`req.body:${JSON.stringify(editArticle)}`)
+
+  const author = editArticle.author
+  if (author === undefined || author === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'author 為必要參數'
+    })
+  }
+  const title = editArticle.title
+  if (title === undefined || title === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'title 為必要參數'
+    })
+  }
+  const content = editArticle.content
+  if (content === undefined || content === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'content 為必要參數'
+    })
+  }
+  const category = editArticle.category
+  if (category === undefined || category === '') {
+    return res.status(ReturnCode.BadRequest).json({
+      code: ErrorCode.MissingParameters,
+      msg: 'category 為必要參數'
+    })
+  }
 
   articleService
     .update({ id, editArticle })

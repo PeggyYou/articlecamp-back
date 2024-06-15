@@ -1,22 +1,23 @@
 const fs = require('fs')
 const FILE_PATH = './public/data/articles.json'
 const { deepCopy } = require('../utils')
-const { resolve } = require('path')
 
 class ArticleModel {
   constructor() {
     this.articles = []
+    this.maxID = []
     this.read()
       .then((articles) => {
         this.articles.push(...articles)
         this.articlesLength = this.articles.length
+        this.maxID = this.maxId()
       })
       .catch((err) => {
         console.log(err)
       })
   }
 
-  // 讀取資料
+  // 讀取文章
   read() {
     return new Promise((resolve, reject) => {
       fs.readFile(FILE_PATH, 'utf-8', (error, data) => {
@@ -35,9 +36,10 @@ class ArticleModel {
 
   // 取得文章列表
   getList() {
+    let articles = deepCopy(this.articles)
     // 文章列表由最新排到最舊
-    this.articles.sort((a, b) => b.updateAt - a.updateAt)
-    return deepCopy(this.articles)
+    articles.sort((a, b) => b.updateAt - a.updateAt)
+    return articles
   }
 
   // 依 id 取得單篇文章
@@ -65,7 +67,7 @@ class ArticleModel {
   // 新增單篇文章
   add(article) {
     return new Promise((resolve, reject) => {
-      article.id = this.maxId() + 1
+      article.id = this.maxID + 1
       article.createAt = this.getTimeStamp()
       article.updateAt = this.getTimeStamp()
 
@@ -130,7 +132,7 @@ class ArticleModel {
   // 寫入資料
   write(data) {
     return new Promise((resolve, reject) => {
-      fs.writeFile(FILE_PATH, JSON.stringify(data), function (error) {
+      fs.writeFile(FILE_PATH, JSON.stringify(data, null, 4), function (error) {
         if (error) {
           reject(`error_write:${error}`)
         } else {
