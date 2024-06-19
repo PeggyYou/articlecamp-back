@@ -37,6 +37,7 @@ class ArticleModel {
   // 取得文章列表
   getList() {
     let articles = deepCopy(this.articles)
+    console.log(`deep copy in article model:${JSON.stringify(articles)}`)
     // 文章列表由最新排到最舊
     articles.sort((a, b) => b.updateAt - a.updateAt)
     return articles
@@ -46,7 +47,10 @@ class ArticleModel {
   get(id) {
     return new Promise((resolve, reject) => {
       let ID = Number(id)
-      let articles = this.articles
+      let articles = this.getList()
+      console.log(
+        `article model get id - articles: ${JSON.stringify(articles)}`
+      )
       let length = articles.length
 
       console.log(`get articles:${JSON.stringify(articles)}`)

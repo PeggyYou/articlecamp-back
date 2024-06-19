@@ -10,13 +10,24 @@ class ArticleService {
   getList(keyword) {
     // 取得文章列表
     let articles = articleModel.getList()
-    console.log(`articles from deepCopy:${articles}`)
+    console.log(`articles from deepCopy:${JSON.stringify(articles)}`)
     let length = articles.length
     let categories = categoryModel.getList()
+    console.log(`categories:${JSON.stringify(categories)}`)
 
     // 帶入文章分類
     for (let i = 0; i < length; i++) {
       let article = articles[i]
+      console.log(`article:${JSON.stringify(article)}`)
+      console.log(`article.category(index)-1:${article.category-1}`)
+      console.log(
+        `categories[article.category - 1]:${categories[article.category - 1]}`
+      )
+      console.log(
+        `categories[article.category - 1].name:${
+          categories[article.category - 1].name
+        }`
+      )
       let category = categories[article.category - 1].name
       article.category = category
     }
